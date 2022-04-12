@@ -52,16 +52,17 @@ class Character implements Figther {
     return this._dexterity;
   }
 
+  // retorna um objeto novo com as propriedades de this._energy, ta sempre criando um objeto novo pra não expor a propriedade e ela não ser alterada
   get energy(): Energy {
-    return this._energy;
+    return { ...this._energy };
   }
 
   receiveDamage(attackPoints: number): number {
-    const demage = (this._defense - attackPoints);
+    const demage = (attackPoints - this._defense);
     if (demage > 0) {
       this._lifePoints -= demage;
     }
-    if (this._lifePoints === 0) {
+    if (this._lifePoints <= 0) {
       this._lifePoints = -1;
     } 
     return this._lifePoints;
@@ -72,11 +73,21 @@ class Character implements Figther {
   }
 
   levelUp(): void {
-      
+    this._maxLifePoints += getRandomInt(1, 10);
+    this._strength += getRandomInt(1, 10);
+    this._defense += getRandomInt(1, 10);
+    this._dexterity += getRandomInt(1, 10);
+    this._energy.amount = 10;
+
+    if (this._maxLifePoints > this.race.maxLifePoints) {
+      this._maxLifePoints = this.race.maxLifePoints;
+    }
+    
+    this._lifePoints = this._maxLifePoints;
   }
 
   special(enemy: Figther): void {
-      
+    enemy.receiveDamage(this._strength);
   }
 }
 export default Character;
